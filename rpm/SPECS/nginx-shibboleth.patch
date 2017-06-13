@@ -1,0 +1,100 @@
+From 3f455cb1aedb65839ca4f6070005c3a0a574ac91 Mon Sep 17 00:00:00 2001
+From: Ian Allison <iana@pims.math.ca>
+Date: Tue, 13 Jun 2017 21:22:10 +0000
+Subject: [PATCH 1/2] Makes a shib module
+
+Signed-off-by: Ian Allison <iana@pims.math.ca>
+---
+ openresty.spec | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/openresty.spec b/openresty.spec
+index f8267af..05706e8 100644
+--- a/openresty.spec
++++ b/openresty.spec
+@@ -12,6 +12,7 @@ URL:            https://openresty.org/
+ 
+ Source0:        https://openresty.org/download/openresty-%{version}.tar.gz
+ Source1:        openresty.init
++Source100:      nginx-http-shibboleth
+ 
+ #Patch0:         openresty-%{version}.patch
+ 
+@@ -131,6 +132,13 @@ BuildArch:      noarch
+ %description opm
+ This package provides the client side tool, opm, for OpenResty Pakcage Manager (OPM).
+ 
++%package mod-http-shibboleth
++Group:		System Environment/Daemons
++Summary:        Nginx HTTP Shibboleth module
++Requires:       openresty >= %{version}-%{release}
++
++%description mod-http-shibboleth
++%{summary}.
+ 
+ %prep
+ %setup -q -n "openresty-%{version}"
+@@ -166,6 +174,7 @@ This package provides the client side tool, opm, for OpenResty Pakcage Manager (
+     --with-http_flv_module \
+     --with-http_mp4_module \
+     --with-http_gunzip_module \
++    --add-dynamic-module=%{_sourcedir}/nginx-http-shibboleth \
+     --with-threads \
+     --with-file-aio \
+     --with-luajit-xcflags='-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT' \
+@@ -253,6 +262,8 @@ fi
+ %{orprefix}/site/manifest/
+ %{orprefix}/site/pod/
+ 
++%files mod-http-shibboleth
++%{orprefix}/nginx/modules/ngx_http_shibboleth_module.so
+ 
+ %changelog
+ * Sat May 27 2017 Yichun Zhang (agentzh) 1.11.2.3-14
+-- 
+1.8.3.1
+
+
+From ae2aca0ae18f678fcf7b6fe00520022cd49d938d Mon Sep 17 00:00:00 2001
+From: Ian Allison <iana@pims.math.ca>
+Date: Tue, 13 Jun 2017 21:51:11 +0000
+Subject: [PATCH 2/2] Handle module code via spectool
+
+Signed-off-by: Ian Allison <iana@pims.math.ca>
+---
+ openresty.spec | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/openresty.spec b/openresty.spec
+index 05706e8..0ad8ff5 100644
+--- a/openresty.spec
++++ b/openresty.spec
+@@ -12,7 +12,7 @@ URL:            https://openresty.org/
+ 
+ Source0:        https://openresty.org/download/openresty-%{version}.tar.gz
+ Source1:        openresty.init
+-Source100:      nginx-http-shibboleth
++Source100:      https://github.com/nginx-shib/nginx-http-shibboleth/archive/v2.0.1.tar.gz
+ 
+ #Patch0:         openresty-%{version}.patch
+ 
+@@ -141,6 +141,7 @@ Requires:       openresty >= %{version}-%{release}
+ %{summary}.
+ 
+ %prep
++%setup -T -b 100 -n "nginx-http-shibboleth-2.0.1"
+ %setup -q -n "openresty-%{version}"
+ 
+ #%patch0 -p1
+@@ -174,7 +175,7 @@ Requires:       openresty >= %{version}-%{release}
+     --with-http_flv_module \
+     --with-http_mp4_module \
+     --with-http_gunzip_module \
+-    --add-dynamic-module=%{_sourcedir}/nginx-http-shibboleth \
++    --add-dynamic-module=%{_builddir}/nginx-http-shibboleth-2.0.1 \
+     --with-threads \
+     --with-file-aio \
+     --with-luajit-xcflags='-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT' \
+-- 
+1.8.3.1
+

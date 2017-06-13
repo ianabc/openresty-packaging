@@ -9,6 +9,10 @@ Fatal() {
   exit 1
 }
 
+pushd ~/rpmbuild/SPECS
+  patch -p1 < nginx-shibboleth.patch
+popd
+
 for specfile in ~/rpmbuild/SPECS/*.spec; do
 
   if ! spectool -g -R $specfile; then
