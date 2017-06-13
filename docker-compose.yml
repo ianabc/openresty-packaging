@@ -1,0 +1,7 @@
+version: '2'
+services:
+  openresty-custom-build:
+    build: .
+    volumes:
+      - ./rpmbuild/RPMS:/home/makerpm/rpmbuild/RPMS
+      - ./rpmbuild/SRPMS:/home/makerpm/rpmbuild/SRPMS

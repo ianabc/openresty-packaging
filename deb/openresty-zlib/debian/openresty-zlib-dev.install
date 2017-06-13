@@ -1,3 +1,0 @@
-usr/local/openresty/zlib/lib/*.a
-usr/local/openresty/zlib/include/zlib.h
-usr/local/openresty/zlib/include/zconf.h
